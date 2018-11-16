@@ -1,0 +1,5 @@
+*.Rdata
+*.RData
+*.history
+*.png
+*.pdf
