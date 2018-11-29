@@ -22,6 +22,7 @@ library(rgeos)
 library(ggplot2)
 library(sp)
 library(RColorBrewer)
+library(raster)
 
 
 # set wd ------------------------------------------------------------------
@@ -48,12 +49,15 @@ BBS_bio <- readRDS('bbs_bio_BOX_M_5930_2018-10-30.rds')
 # range map ---------------------------------------------------------------
 
 #shp file from BirdLife International
-setwd(paste0(dir, 'Example_BBS/Data/shp_files'))
+setwd(paste0(dir, 'BBS_ns/Data/shp_files'))
 sp_rng <- rgdal::readOGR('Cardinalis_cardinalis_22723819.shp', verbose = FALSE)
+usa_4326 <- rgdal::readOGR('USA_4326.shp', verbose = FALSE)
 
-sp_rng@data$id <- rownames(sp_rng@data)
-sp_rng_pts <- ggplot2::fortify(sp_rng, region = 'id')
-sp_rng_df <- merge(sp_rng_pts, sp_rng@data, by = 'id')
+sp_rng_usa <- raster::intersect(usa_4326, sp_rng)
+
+sp_rng_usa@data$id <- rownames(sp_rng_usa@data)
+sp_rng_usa_pts <- ggplot2::fortify(sp_rng_usa, region = 'id')
+sp_rng_usa_df <- merge(sp_rng_usa_pts, sp_rng_usa@data, by = 'id')
 
 
 usa_m <- maps::map('usa', plot = FALSE, fill = TRUE)
@@ -61,7 +65,7 @@ IDs <- sapply(strsplit(usa_m$names, ":"), function(x) x[1])
 usa <- maptools::map2SpatialPolygons(usa_m, IDs = IDs, proj4string = sp::CRS('+init=epsg:4326'))
 
 
-spydf_states <- rgeos::gBuffer(usa, byid=TRUE, width=0)
+
 
 # process fit data ------------------------------------------------------------
 
@@ -115,6 +119,54 @@ predict_ensemble_df <- predict_ensemble_df_p[-to.rm,]
 
 
 
+
+# Calculate residuals -----------------------------------------------------
+
+cell_cnt <- data.frame(event_id = BBS_bio$event_id, 
+                       bio1 = BBS_bio$bio1, bio4 = BBS_bio$bio4,
+                       bio12 = BBS_bio$bio12, bio15 = BBS_bio$bio15,
+                       lng = BBS_bio$lng, lat = BBS_bio$lat, 
+                       target_count = BBS_bio$target_count, cell = NA,
+                       predict_global = NA, ensemble = NA)
+
+
+#BBS spatial points
+BBS_sp_pts <- sp::SpatialPoints(cbind(cell_cnt$lng, cell_cnt$lat))
+
+#Bioclim spatial points
+BC_sp_pts <- sp::SpatialPoints(cbind(predict_ensemble_df_p$x, 
+                                     predict_ensemble_df_p$y))
+
+#specify CRS
+sp::proj4string(BBS_sp_pts) <- sp::CRS('+init=epsg:4326')
+sp::proj4string(BC_sp_pts) <- sp::CRS('+init=epsg:4326')
+
+#transform to projected
+tr_BBS <- sp::spTransform(BBS_sp_pts, sp::CRS("+init=epsg:3857"))
+tr_BC <- sp::spTransform(BC_sp_pts, sp::CRS("+init=epsg:3857"))
+
+#index of closest bioclim cell to BBS site
+cl_bc <- apply(rgeos::gDistance(tr_BBS, tr_BC, byid = TRUE), 2, which.min)
+
+#fill df
+cell_cnt$cell <- predict_ensemble_df_p[cl_bc, ]$cell
+cell_cnt$predict_global <- predict_ensemble_df_p[cl_bc, ]$predict_global
+cell_cnt$ensemble <- predict_ensemble_df_p[cl_bc, ]$ensemble
+
+#residuals df
+resid_df <- data.frame(cell_cnt, 
+                       resid_global = cell_cnt$target_count - cell_cnt$predict_global, 
+                       resid_ensemble = cell_cnt$target_count - cell_cnt$ensemble)
+
+#calculate residual sum of squares for global and ensemble
+RSS_global <- sum((resid_df$resid_global^2))
+RSS_ensemble <- sum((resid_df$resid_ensemble^2))
+
+#amount of reduction in RSS by using ensemble model compared to global model
+(RSS_global - RSS_ensemble) / RSS_global
+
+
+
 # Panel a -------------------------------------------------
 
 #convert boxes to df
@@ -132,7 +184,7 @@ box_df_s <- dplyr::filter(box_df, id %in% box_id_s)
 box_map <- ggplot() +
   #geom_path(data = usamap, aes(x = x, y = y), color = 'black', alpha = 0.7) +
   geom_polygon(data = usa, aes(x = long, y = lat, group = group), fill = rgb(0,0,0, 0.2)) +
-  geom_polygon(data = sp_rng_df,
+  geom_polygon(data = sp_rng_usa_df,
                aes(x = long, y = lat, group=group), fill = 'orange', alpha = 0.8) +
   geom_path(data = box_df_s, aes(x = long, y = lat, group = group), color = 'black',
             alpha = 0.5) +
@@ -150,7 +202,6 @@ box_map <- ggplot() +
 
 
 box_map
-
 
 
 # Panel b ----------------------------------------
