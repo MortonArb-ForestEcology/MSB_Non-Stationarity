@@ -3,10 +3,10 @@
 # --------------------------------------
 # Loading in data to make figures from script 8
 
-load("processed_data/gam.temp_temp_only.Rdata") # gam.temp
-load("processed_data/gam.time_time_only.Rdata") # gam.time
-load("processed_data/gam.time.temp_time_temp.Rdata") # gam.time.temp 
-load("processed_data/gam.full_full_model.Rdata") # gam.full
+load("../output_derived/gam.temp_temp_only.Rdata") # gam.temp
+load("../output_derived/gam.time_time_only.Rdata") # gam.time
+load("../output_derived/gam.time.temp_time_temp.Rdata") # gam.time.temp 
+load("../output_derived/gam.full_full_model.Rdata") # gam.full
 
 #################################################################
 # Important!!!
@@ -44,9 +44,9 @@ residual.plot <- ggplot(data=resid.graph[resid.graph$Year<2013,]) + facet_grid(t
 
 
 # Sensitivity curves
-load("processed_data/gam.full_response_graph.Rdata")
-load("processed_data/gam.time.temp_response_time_temp.R")
-load("processed_data/gam.temp_response_graph.Rdata")
+load("../output_derived/gam.full_response_graph.Rdata")
+load("../output_derived/gam.time.temp_response_time_temp.Rdata")
+load("../output_derived/gam.temp_response_graph.Rdata")
 
 sens.curves <- ggplot() + 
                   geom_hline(yintercept=1, linetype="dashed")+
@@ -101,7 +101,7 @@ combo.curves.effects <- plot_grid(sens.curves, gam.effects, align = "v", nrow = 
 
 comp.plot <- plot_grid(residual.plot, combo.curves.effects, ncol = 2, rel_heights = c(1/2, 1/2), labels = c("A)", ""))
 
-png(filename="composite_nonstationarity_TR_graph.png", height=8, width=11, unit="in", res=300)
+png(filename="../figures/composite_nonstationarity_TR_graph.png", height=8, width=11, unit="in", res=300)
 comp.plot
 dev.off()
 
