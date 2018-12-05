@@ -8,6 +8,10 @@ load("processed_data/gam.time_time_only.Rdata") # gam.time
 load("processed_data/gam.time.temp_time_temp.Rdata") # gam.time.temp 
 load("processed_data/gam.full_full_model.Rdata") # gam.full
 
+#################################################################
+# Important!!!
+# Run Lines 110+ in 8_GAM_script_clean.R to ensure that data are loaded to make this figure
+#################################################################
 
 # needs reorganized to plot in gglpot.
 resid.temp <- data.frame(resids = resid(gam.temp),
@@ -93,9 +97,9 @@ gam.effects <- ggplot(data.graph[data.graph$Site.Code=="LF" & data.graph$Year<20
 
 library(cowplot)
 
-combo.curves.effects <- plot_grid(sens.curves, gam.effects, align = "v", nrow = 2, rel_heights = c(1/2, 1/2))
+combo.curves.effects <- plot_grid(sens.curves, gam.effects, align = "v", nrow = 2, rel_heights = c(1/2, 1/2), labels = c("B)", "C)"))
 
-comp.plot <- plot_grid(residual.plot, combo.curves.effects, align = "h", ncol = 2, rel_heights = c(1/2, 1/2))
+comp.plot <- plot_grid(residual.plot, combo.curves.effects, ncol = 2, rel_heights = c(1/2, 1/2), labels = c("A)", ""))
 
 png(filename="composite_nonstationarity_TR_graph.png", height=8, width=11, unit="in", res=300)
 comp.plot
