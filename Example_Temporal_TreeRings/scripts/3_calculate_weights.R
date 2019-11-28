@@ -1,6 +1,6 @@
 library(ggplot2)
 library(car)
-load(file="gam.full_weights.Rdata")
+load(file="../output_derived/gam.full_weights.Rdata")
 
 se <- function(x){
   sd(x, na.rm=TRUE) / sqrt((length(!is.na(x))))}
@@ -47,8 +47,8 @@ gam.full.weights$wts.check <- rowSums(abs(gam.full.weights[,factors.weights]))
 data.graph$wts.check <- rowSums(abs(data.graph[,factors.weights]))
 
 summary(gam.full.weights)
-save(gam.full.weights, file="gam.full_weights_processed.Rdata")
-save(data.graph, file="gam.full_data_graph.Rdata")
+save(gam.full.weights, file="../output_derived/gam.full_weights_processed.Rdata")
+save(data.graph, file="../output_derived/gam.full_data_graph.Rdata")
 summary(data.graph)
 
 #  PLotting only one site because they should be identical lines  due to the model structure
@@ -67,8 +67,8 @@ gam.effects <- ggplot(data.graph[data.graph$Site.Code=="LF",]) +
                   	scale_x_continuous(breaks = c(1890, 1900, 1910, 1920,  1930, 1940, 1950, 1960, 1970, 1980, 1990, 2000, 2010, 2020)) +
                     labs(x=expression(bold(paste("Year"))), y = expression(bold(paste("Relative Effect Size"))))
                   
-save(gam.effects, file = "gam.effects.graph.Rdata")
+save(gam.effects, file = "../output_derived/gam.effects.graph.Rdata")
 
-pdf("HF_QURU_effect_size.pdf", width= 13, height = 8.5)
+pdf("../figures/prelim_figures/HF_QURU_effect_size.pdf", width= 13, height = 8.5)
   gam.effects
 dev.off()

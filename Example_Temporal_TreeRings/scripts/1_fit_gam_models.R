@@ -3,6 +3,10 @@ library(mgcv)
 library(ggplot2)
 library(car)
 
+# Make dependent file structures
+dir.create("../output_derived", recursive=T, showWarnings = F)
+dir.create("../figures/prelim_figures", recursive=T, showWarnings = F)
+
 # GAM script for non-stationarity paper
 # Reading in Harvard Forest data
 ### Only red oak from two different plots at Harvard Forest
@@ -183,7 +187,7 @@ for(v in vars.fac){
 summary(new.dat.temp)
 
 
-source("0_Calculate_GAMM_Posteriors.R")
+source("helper_functions/0_Calculate_GAMM_Posteriors.R")
 temp.ci.terms.pred <- post.distns(model.gam=gam.temp, model.name="Site_level", n=n, newdata=new.dat.temp, vars=c("tmean"), terms=T)
 
 temp.ci.out <- temp.ci.terms.pred$ci # separting out the confidence interval 
@@ -214,7 +218,7 @@ load("../output_derived/gam.time_time_only.Rdata")
 
 n <- 100						
 # SOurce & run the function
-source("0_Calculate_GAMM_Posteriors.R")
+source("helper_functions/0_Calculate_GAMM_Posteriors.R")
 # Make things run faster by reducing dimensions
 new.dat.time <- new.dat
 vars.fac <- c("Site.Code", "PlotID", "TreeID")
@@ -287,7 +291,7 @@ summary(new.dat.time.temp)
 
 
 # SOurce & run the function
-source("0_Calculate_GAMM_Posteriors.R")
+source("helper_functions/0_Calculate_GAMM_Posteriors.R")
 time.temp.ci.terms.pred2 <- post.distns(model.gam=gam.time.temp, model.name="spp_only", n=n, newdata=new.dat.time.temp, vars=c("Year", "tmean"), terms=T)
 
 time.temp.ci.out2 <- time.temp.ci.terms.pred2$ci # separting out the confidence interval 
@@ -300,7 +304,7 @@ time.temp.ci.out2[,c("mean.bai", "lwr.bai", "upr.bai")] <- exp(time.temp.ci.out2
 
 
 
-save(time.temp.ci.out2, file="../output_derived/gam.time.temp_response_time_temp.R")
+save(time.temp.ci.out2, file="../output_derived/gam.time.temp_response_time_temp.Rdata")
 
 png("../figures/prelim_figures/gam.time.temp_sensitivities_tmean.png", width= 8, height = 8, units="in", res=180)		
 ggplot(data=time.temp.ci.out2[time.temp.ci.out2$Effect %in% c("tmean"), ]) + 
@@ -359,7 +363,7 @@ for(v in vars.fac){
 # new.dat.full$spp.cc <- as.factor(paste(new.dat.full$Species, new.dat.full$Canopy.Class, sep="."))
 summary(new.dat.full)
 
-source("0_Calculate_GAMM_Posteriors.R")
+source("helper_functions/0_Calculate_GAMM_Posteriors.R")
 full.ci.terms.pred <- post.distns(model.gam=gam.full, model.name="Additive", n=n, newdata=new.dat.full, vars=c("Year", "tmean", "precip"), terms=T)
 
 full.ci.out <- full.ci.terms.pred$ci # separting out the confidence interval 

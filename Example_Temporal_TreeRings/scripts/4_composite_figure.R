@@ -1,5 +1,5 @@
 # composite figure script
-
+path.ms <- "/Volumes/GoogleDrive/My Drive/Non-Stationarity_MSB/Submission 2/figures/"
 # --------------------------------------
 # Loading in data to make figures from script 8
 
@@ -41,6 +41,20 @@ residual.plot <- ggplot(data=resid.graph[resid.graph$Year<2013,]) + facet_grid(t
                     scale_x_continuous(breaks = c(1900, 1920, 1940, 1960, 1980, 2000, 2020)) +
                     labs(x=expression(bold(paste("Year"))), y = expression(bold(paste("Residual Value"))))
   
+resid.simple <- ggplot(data=resid.graph[resid.graph$Year<2013 & resid.graph$type %in% c("Temp Only", "Temp + Time"),]) + facet_grid(type~.) +
+  geom_point(aes(x=Year, y=resids), alpha=0.2, stroke=0, size=0.5) +
+  geom_hline(aes(yintercept=0), col="red") +
+  theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
+        panel.background = element_blank())+
+  theme(axis.line.x = element_line(color="black", size = 0.5),
+        axis.line.y = element_line(color="black", size = 0.5),
+        strip.text.y=element_text(face="bold", size=10),
+        axis.text=element_text(size=8),
+        axis.title=element_text(face="bold", size=10)) +
+  scale_x_continuous(breaks = c(1900, 1925, 1950, 1975, 2000)) +
+  coord_cartesian(ylim=quantile(resid.graph$resids, c(0.001, 0.999), na.rm=T)) +
+  labs(x=expression(bold(paste("Year"))), y = expression(bold(paste("Residual Value"))))
+
 
 
 # Sensitivity curves
@@ -65,6 +79,33 @@ sens.curves <- ggplot() +
                         axis.line.y = element_line(color="black", size = 0.5)) +
                   theme(legend.position=c(0.4,0.25)) +
                   labs(x = "Temperature", y = expression(bold(paste("Effect on BAI (mm"^"2","y"^"-1",")")))) 
+
+
+sens.curves.simple <- ggplot() + 
+  geom_hline(yintercept=1, linetype="dashed")+
+  geom_ribbon(data=temp.ci.out[temp.ci.out$Effect %in% c("tmean"), ], aes(x=x, ymin=lwr.bai, ymax=upr.bai, fill="Temp Only"), alpha=0.5) +
+  geom_line(data=temp.ci.out[temp.ci.out$Effect %in% c("tmean"), ], aes(x=x, y=mean.bai, color="Temp Only")) +
+  geom_ribbon(data=time.temp.ci.out2[time.temp.ci.out2$Effect %in% c("tmean"), ], aes(x=x, ymin=lwr.bai, ymax=upr.bai, fill="Temp + Time"), alpha=0.5) +
+  geom_line(data=time.temp.ci.out2[time.temp.ci.out2$Effect %in% c("tmean"), ], aes(x=x, y=mean.bai, color="Temp + Time")) +
+  guides(color=F, fill=guide_legend(title=NULL)) +
+  scale_fill_manual(values=c("#0072B2", "#E69F00")) +
+  scale_color_manual(values=c("#0072B2", "#E69F00")) +
+  theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
+        panel.background = element_blank())+
+  theme(axis.line.x = element_line(color="black", size = 0.5),
+        axis.line.y = element_line(color="black", size = 0.5),
+        axis.text=element_text(size=8),
+        axis.title=element_text(face="bold", size=10)) +
+  theme(legend.position=c(0.65,0.25),
+        legend.background = element_blank()) +
+  labs(x = "Temperature", y = expression(bold(paste("Effect on BAI (mm"^"2","y"^"-1",")")))) 
+
+
+# Saving the manuscript figure
+png(filename=file.path(path.ms, "composite_nonstationarity_TR_graph.png"), height=7.5, width=11.5, unit="cm", res=300)
+cowplot::plot_grid(resid.simple, sens.curves.simple, ncol = 2, labels = c("A)", "B)"))
+dev.off()
+
 
 #---------------------------------------
 # Loading in figure from script 9

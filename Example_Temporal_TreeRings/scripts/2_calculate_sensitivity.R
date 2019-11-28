@@ -8,7 +8,7 @@
 load("processed_data/gam.full_full_model.Rdata")
 
 
-source("0_Calculate_GAMM_Posteriors.R")
+source("helper_functions/0_Calculate_GAMM_Posteriors.R")
 # Fitting our model to the data to see if we're doing a pasable job of capturing the variance
 # If things don't match, we shoudl take our sensitiivty curves with a grain of salt
 
@@ -75,7 +75,7 @@ abline(a=0, b=1, col="red")
 summary(mean.rw)
 
 # Sanity Check #1 graph
-pdf("gam.full_sanitycheck1_mod_vs_real_rw.pdf", width= 13, height = 8.5)
+pdf("../figures/prelim_figures/gam.full_sanitycheck1_mod_vs_real_rw.pdf", width= 13, height = 8.5)
  ggplot(data=mean.rw) + facet_grid(Site.Code~., scales="fixed") + theme_bw() +
           # plot the data
           geom_ribbon(aes(x=Year, ymin=BAI.lwr, ymax=BAI.upr), alpha=0.5) +
@@ -102,7 +102,7 @@ summary(mean.rw)
 summary(model.pred2)
 
 # Sanity Check #2 graph
-pdf("gam.full_sanitycheck2_tree_level.pdf", width= 13, height = 8.5)
+pdf("../figures/prelim_figures/gam.full_sanitycheck2_tree_level.pdf", width= 13, height = 8.5)
 ggplot(data=dat.raw[dat.raw$TreeID %in% sanity2.trees,]) + facet_wrap(~TreeID, scales="fixed") + theme_bw() +
   # plot the data
   #geom_ribbon(aes(x=Year, ymin=rw.lwr, ymax=rw.upr), alpha=0.5) +
@@ -128,7 +128,7 @@ summary(sanity.lm2)
 
 
 # running scripts to get the weights
-source("0_Calculate_GAMM_Weights.R")
+source("helper_functions/0_Calculate_GAMM_Weights.R")
 
 
 
@@ -166,4 +166,4 @@ for(i in 1:nrow(gam.full.weights)){
 gam.full.weights$factor.max2 <- as.factor(gam.full.weights$factor.max2)
 summary(gam.full.weights)
 
-save(gam.full.weights, file="gam.full_weights.Rdata")
+save(gam.full.weights, file="../output_derived/gam.full_weights.Rdata")
