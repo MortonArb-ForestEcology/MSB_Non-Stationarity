@@ -1,7 +1,9 @@
+library(ggplot2)
 # composite figure script
 path.ms <- "/Volumes/GoogleDrive/My Drive/Non-Stationarity_MSB/Submission 2/figures/"
 # --------------------------------------
 # Loading in data to make figures from script 8
+dat.raw <- read.csv("../input_raw/tree_ring_input_data.csv")
 
 load("../output_derived/gam.temp_temp_only.Rdata") # gam.temp
 load("../output_derived/gam.time_time_only.Rdata") # gam.time
@@ -9,8 +11,6 @@ load("../output_derived/gam.time.temp_time_temp.Rdata") # gam.time.temp
 load("../output_derived/gam.full_full_model.Rdata") # gam.full
 
 #################################################################
-# Important!!!
-# Run Lines 110+ in 8_GAM_script_clean.R to ensure that data are loaded to make this figure
 #################################################################
 
 # needs reorganized to plot in gglpot.
@@ -78,7 +78,7 @@ sens.curves <- ggplot() +
                   theme(axis.line.x = element_line(color="black", size = 0.5),
                         axis.line.y = element_line(color="black", size = 0.5)) +
                   theme(legend.position=c(0.4,0.25)) +
-                  labs(x = "Temperature", y = expression(bold(paste("Effect on BAI (mm"^"2","y"^"-1",")")))) 
+                  labs(x = "Temperature", y = "Effect on BAI (%)")
 
 
 sens.curves.simple <- ggplot() + 
@@ -98,11 +98,11 @@ sens.curves.simple <- ggplot() +
         axis.title=element_text(face="bold", size=10)) +
   theme(legend.position=c(0.65,0.25),
         legend.background = element_blank()) +
-  labs(x = "Temperature", y = expression(bold(paste("Effect on BAI (mm"^"2","y"^"-1",")")))) 
+  labs(x = "Temperature", y = "Effect on BAI (%)")
 
 
 # Saving the manuscript figure
-png(filename=file.path(path.ms, "composite_nonstationarity_TR_graph.png"), height=7.5, width=11.5, unit="cm", res=300)
+png(filename=file.path(path.ms, "Figure4_composite_nonstationarity_TR_graph.png"), height=7.5, width=11.5, unit="cm", res=300)
 cowplot::plot_grid(resid.simple, sens.curves.simple, ncol = 2, labels = c("A)", "B)"))
 dev.off()
 
@@ -110,7 +110,8 @@ dev.off()
 #---------------------------------------
 # Loading in figure from script 9
 
-load("gam.full_data_graph.Rdata")
+# load("gam.full_data_graph.Rdata")
+load("../output_derived/gam.full_data_graph.Rdata") # gam.full
 
 # Effects Curve
 
@@ -133,7 +134,7 @@ gam.effects <- ggplot(data.graph[data.graph$Site.Code=="LF" & data.graph$Year<20
                           axis.line.y = element_line(color="black", size = 0.5),
                           legend.position = c(0.75, 0.25))+
                     
-                    labs(x=expression(bold(paste("Year"))), y = expression(bold(paste("Relative Effect Size"))))
+                    labs(x=expression(bold(paste("Year"))), y = "Effect on BAI (%)")
 
 
 library(cowplot)
@@ -142,7 +143,7 @@ combo.curves.effects <- plot_grid(sens.curves, gam.effects, align = "v", nrow = 
 
 comp.plot <- plot_grid(residual.plot, combo.curves.effects, ncol = 2, rel_heights = c(1/2, 1/2), labels = c("A)", ""))
 
-png(filename="../figures/composite_nonstationarity_TR_graph.png", height=8, width=11, unit="in", res=300)
+png(filename=file.path(path.ms, "WebFigure2_composite_nonstationarity_TR_graph_full.png"), height=8, width=11, unit="in", res=300)
 comp.plot
 dev.off()
 
