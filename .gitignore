@@ -5,3 +5,4 @@
 *.pdf
 Example_Temporal_TreeRings/scripts/.Rhistory
 Example_Temporal_TreeRings/output_derived/sensitivity_extaction_dataframe.csv
+Example_Temporal_TreeRings/.DS_Store

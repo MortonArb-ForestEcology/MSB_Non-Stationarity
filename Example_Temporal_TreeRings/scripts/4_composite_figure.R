@@ -1,6 +1,6 @@
 library(ggplot2)
 # composite figure script
-path.ms <- "/Volumes/GoogleDrive/My Drive/Non-Stationarity_MSB/Submission 2/figures/"
+path.ms <- "/Volumes/GoogleDrive/My Drive/Non-Stationarity_MSB/Submission 3/figures/"
 # --------------------------------------
 # Loading in data to make figures from script 8
 dat.raw <- read.csv("../input_raw/tree_ring_input_data.csv")
@@ -63,13 +63,13 @@ load("../output_derived/gam.time.temp_response_time_temp.Rdata")
 load("../output_derived/gam.temp_response_graph.Rdata")
 
 sens.curves <- ggplot() + 
-                  geom_hline(yintercept=1, linetype="dashed")+
-                  geom_ribbon(data=temp.ci.out[temp.ci.out$Effect %in% c("tmean"), ], aes(x=x, ymin=lwr.bai, ymax=upr.bai, fill="Temp Only"), alpha=0.5) +
-                  geom_line(data=temp.ci.out[temp.ci.out$Effect %in% c("tmean"), ], aes(x=x, y=mean.bai, color="Temp Only")) +
-                  geom_ribbon(data=time.temp.ci.out2[time.temp.ci.out2$Effect %in% c("tmean"), ], aes(x=x, ymin=lwr.bai, ymax=upr.bai, fill="Temp + Time"), alpha=0.5) +
-                  geom_line(data=time.temp.ci.out2[time.temp.ci.out2$Effect %in% c("tmean"), ], aes(x=x, y=mean.bai, color="Temp + Time")) +
-                  geom_ribbon(data=full.ci.out[full.ci.out$Effect %in% c("tmean"), ], aes(x=x, ymin=lwr.bai, ymax=upr.bai, fill="Temp + Time + Precip"), alpha=0.5) +
-                  geom_line(data=full.ci.out[full.ci.out$Effect %in% c("tmean"), ], aes(x=x, y=mean.bai, color="Temp + Time + Precip")) +
+                  geom_hline(yintercept=100, linetype="dashed")+
+                  geom_ribbon(data=temp.ci.out[temp.ci.out$Effect %in% c("tmean"), ], aes(x=x, ymin=lwr.bai*100, ymax=upr.bai*100, fill="Temp Only"), alpha=0.5) +
+                  geom_line(data=temp.ci.out[temp.ci.out$Effect %in% c("tmean"), ], aes(x=x, y=mean.bai*100, color="Temp Only")) +
+                  geom_ribbon(data=time.temp.ci.out2[time.temp.ci.out2$Effect %in% c("tmean"), ], aes(x=x, ymin=lwr.bai*100, ymax=upr.bai*100, fill="Temp + Time"), alpha=0.5) +
+                  geom_line(data=time.temp.ci.out2[time.temp.ci.out2$Effect %in% c("tmean"), ], aes(x=x, y=mean.bai*100, color="Temp + Time")) +
+                  geom_ribbon(data=full.ci.out[full.ci.out$Effect %in% c("tmean"), ], aes(x=x, ymin=lwr.bai*100, ymax=upr.bai*100, fill="Temp + Time + Precip"), alpha=0.5) +
+                  geom_line(data=full.ci.out[full.ci.out$Effect %in% c("tmean"), ], aes(x=x, y=mean.bai*100, color="Temp + Time + Precip")) +
                   guides(color=F, fill=guide_legend(title=NULL)) +
                   scale_fill_manual(values=c("#0072B2", "#009E73", "#E69F00")) +
                   scale_color_manual(values=c("#0072B2", "#009E73", "#E69F00")) +
@@ -77,16 +77,16 @@ sens.curves <- ggplot() +
                         panel.background = element_blank())+
                   theme(axis.line.x = element_line(color="black", size = 0.5),
                         axis.line.y = element_line(color="black", size = 0.5)) +
-                  theme(legend.position=c(0.4,0.25)) +
-                  labs(x = "Temperature", y = "Effect on BAI (%)")
+                  theme(legend.position=c(0.6,0.25)) +
+                  labs(x = "Temperature", y = "Relativized BAI (%)")
 
 
 sens.curves.simple <- ggplot() + 
-  geom_hline(yintercept=1, linetype="dashed")+
-  geom_ribbon(data=temp.ci.out[temp.ci.out$Effect %in% c("tmean"), ], aes(x=x, ymin=lwr.bai, ymax=upr.bai, fill="Temp Only"), alpha=0.5) +
-  geom_line(data=temp.ci.out[temp.ci.out$Effect %in% c("tmean"), ], aes(x=x, y=mean.bai, color="Temp Only")) +
-  geom_ribbon(data=time.temp.ci.out2[time.temp.ci.out2$Effect %in% c("tmean"), ], aes(x=x, ymin=lwr.bai, ymax=upr.bai, fill="Temp + Time"), alpha=0.5) +
-  geom_line(data=time.temp.ci.out2[time.temp.ci.out2$Effect %in% c("tmean"), ], aes(x=x, y=mean.bai, color="Temp + Time")) +
+  geom_hline(yintercept=100, linetype="dashed")+
+  geom_ribbon(data=temp.ci.out[temp.ci.out$Effect %in% c("tmean"), ], aes(x=x, ymin=lwr.bai*100, ymax=upr.bai*100, fill="Temp Only"), alpha=0.5) +
+  geom_line(data=temp.ci.out[temp.ci.out$Effect %in% c("tmean"), ], aes(x=x, y=mean.bai*100, color="Temp Only")) +
+  geom_ribbon(data=time.temp.ci.out2[time.temp.ci.out2$Effect %in% c("tmean"), ], aes(x=x, ymin=lwr.bai*100, ymax=upr.bai*100, fill="Temp + Time"), alpha=0.5) +
+  geom_line(data=time.temp.ci.out2[time.temp.ci.out2$Effect %in% c("tmean"), ], aes(x=x, y=mean.bai*100, color="Temp + Time")) +
   guides(color=F, fill=guide_legend(title=NULL)) +
   scale_fill_manual(values=c("#0072B2", "#E69F00")) +
   scale_color_manual(values=c("#0072B2", "#E69F00")) +
@@ -98,7 +98,7 @@ sens.curves.simple <- ggplot() +
         axis.title=element_text(face="bold", size=10)) +
   theme(legend.position=c(0.65,0.25),
         legend.background = element_blank()) +
-  labs(x = "Temperature", y = "Effect on BAI (%)")
+  labs(x = "Temperature", y = "Relativized BAI (%)")
 
 
 # Saving the manuscript figure
@@ -106,6 +106,21 @@ png(filename=file.path(path.ms, "Figure4_composite_nonstationarity_TR_graph.png"
 cowplot::plot_grid(resid.simple, sens.curves.simple, ncol = 2, labels = c("A)", "B)"))
 dev.off()
 
+jpeg(filename=file.path(path.ms, "Figure4_composite_nonstationarity_TR_graph.jpeg"), height=7.5, width=11.5, unit="cm", res=300)
+cowplot::plot_grid(resid.simple, sens.curves.simple, ncol = 2, labels = c("A)", "B)"))
+dev.off()
+
+tiff(filename=file.path(path.ms, "Figure4_composite_nonstationarity_TR_graph.tiff"), height=7.5, width=11.5, unit="cm", res=300)
+cowplot::plot_grid(resid.simple, sens.curves.simple, ncol = 2, labels = c("A)", "B)"))
+dev.off()
+
+
+tiff(filename=file.path(path.ms, "Figure4a_composite_nonstationarity_TR_graph.tiff"), height=7.5*2, width=11.5, unit="cm", res=300)
+cowplot::plot_grid(resid.simple, ncol = 1, labels = c("A)"))
+dev.off()
+tiff(filename=file.path(path.ms, "Figure4b_composite_nonstationarity_TR_graph.tiff"), height=7.5*2, width=11.5, unit="cm", res=300)
+cowplot::plot_grid(sens.curves.simple, ncol = 1, labels = c("B)"))
+dev.off()
 
 #---------------------------------------
 # Loading in figure from script 9
@@ -116,14 +131,14 @@ load("../output_derived/gam.full_data_graph.Rdata") # gam.full
 # Effects Curve
 
 gam.effects <- ggplot(data.graph[data.graph$Site.Code=="LF" & data.graph$Year<2013,]) + 
-                    geom_hline(aes(yintercept=1), linetype="dashed") +
-                    geom_ribbon(aes(x=Year, ymin=fit.tmean.lwr, ymax=fit.tmean.upr, fill="Temp"), alpha=0.5) +
-                    geom_ribbon(aes(x=Year, ymin=fit.precip.lwr, ymax=fit.precip.upr, fill="Precip"), alpha=0.5) + 
+                    geom_hline(aes(yintercept=100), linetype="dashed") +
+                    geom_ribbon(aes(x=Year, ymin=fit.tmean.lwr*100, ymax=fit.tmean.upr*100, fill="Temp"), alpha=0.5) +
+                    geom_ribbon(aes(x=Year, ymin=fit.precip.lwr*100, ymax=fit.precip.upr*100, fill="Precip"), alpha=0.5) + 
                     
                     
                     
-                    geom_line(aes(x=Year, y=fit.tmean, color="Temp"), size=1) +
-                    geom_line(aes(x=Year, y=fit.precip, color="Precip"), size=1) +
+                    geom_line(aes(x=Year, y=fit.tmean*100, color="Temp"), size=1) +
+                    geom_line(aes(x=Year, y=fit.precip*100, color="Precip"), size=1) +
                     
                     scale_color_manual(values=c("blue", "red"), labels=c("Precip", "Temp")) +
                     scale_fill_manual(values=c("blue", "red"), labels=c("Precip", "Temp"), name="") +
@@ -134,7 +149,7 @@ gam.effects <- ggplot(data.graph[data.graph$Site.Code=="LF" & data.graph$Year<20
                           axis.line.y = element_line(color="black", size = 0.5),
                           legend.position = c(0.75, 0.25))+
                     
-                    labs(x=expression(bold(paste("Year"))), y = "Effect on BAI (%)")
+                    labs(x=expression(bold(paste("Year"))), y = "Relativized BAI (%)")
 
 
 library(cowplot)
@@ -143,8 +158,11 @@ combo.curves.effects <- plot_grid(sens.curves, gam.effects, align = "v", nrow = 
 
 comp.plot <- plot_grid(residual.plot, combo.curves.effects, ncol = 2, rel_heights = c(1/2, 1/2), labels = c("A)", ""))
 
-png(filename=file.path(path.ms, "WebFigure2_composite_nonstationarity_TR_graph_full.png"), height=8, width=11, unit="in", res=300)
+tiff(filename=file.path(path.ms, "WebFigure2_composite_nonstationarity_TR_graph_full.tiff"), height=8, width=11, unit="in", res=300)
 comp.plot
 dev.off()
 
+png(filename=file.path(path.ms, "WebFigure2_composite_nonstationarity_TR_graph_full.png"), height=8, width=11, unit="in", res=300)
+comp.plot
+dev.off()
 
