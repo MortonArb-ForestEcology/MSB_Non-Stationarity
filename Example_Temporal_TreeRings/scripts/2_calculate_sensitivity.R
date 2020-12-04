@@ -5,7 +5,7 @@
 # Set up a dummy dataset for the script to run correctly
 # number of simulations to run
 
-load("processed_data/gam.full_full_model.Rdata")
+load("../output_derived/gam.full_full_model.Rdata")
 
 
 source("helper_functions/0_Calculate_GAMM_Posteriors.R")
@@ -167,3 +167,4 @@ gam.full.weights$factor.max2 <- as.factor(gam.full.weights$factor.max2)
 summary(gam.full.weights)
 
 save(gam.full.weights, file="../output_derived/gam.full_weights.Rdata")
+

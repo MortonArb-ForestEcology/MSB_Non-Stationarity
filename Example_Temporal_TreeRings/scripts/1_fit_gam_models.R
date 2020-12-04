@@ -10,7 +10,7 @@ dir.create("../figures/prelim_figures", recursive=T, showWarnings = F)
 # GAM script for non-stationarity paper
 # Reading in Harvard Forest data
 ### Only red oak from two different plots at Harvard Forest
-dat.raw <- read.csv("../input_raw/tree_ring_input_data.csv", header=T)
+dat.raw <- read.csv("../input_raw/tree_ring_input_data.csv", header=T, stringsAsFactors = T)
 summary(dat.raw)
 ################################################### 
 # HERE'S THE GAMM!!!
@@ -306,8 +306,7 @@ time.temp.ci.out2[,c("mean.bai", "lwr.bai", "upr.bai")] <- exp(time.temp.ci.out2
 
 save(time.temp.ci.out2, file="../output_derived/gam.time.temp_response_time_temp.Rdata")
 
-png("../figures/prelim_figures/gam.time.temp_sensitivities_tmean.png", width= 8, height = 8, units="in", res=180)		
-ggplot(data=time.temp.ci.out2[time.temp.ci.out2$Effect %in% c("tmean"), ]) + 
+png("../figures/prelim_figures/gam.time.temp_sensitivities_tmean.png", width= 8, height = 8, units="in", res=180)		ggplot(data=time.temp.ci.out2[time.temp.ci.out2$Effect %in% c("tmean"), ]) + 
   geom_hline(yintercept=1, linetype="dashed")+
   geom_ribbon(aes(x=x, ymin=lwr.bai, ymax=upr.bai), alpha=0.5) +
   geom_line(aes(x=x, y=mean.bai)) +
@@ -329,7 +328,7 @@ ggplot() +
   labs(x = "Climate Variable", y = expression(bold(paste("Effect on BAI (mm"^"2","y"^"-1",")")))) 
 dev.off()
 
-png("../figures/prelim_figures/gam.time.temp_sensitivities_year.png", width= 11, height = 8, units="in", res=180)		
+png("../figures/prelim_figures/gam.time.temp_sensitivities_year.png", width= 11, height = 8, units="in", res=180)	
 ggplot(data=time.temp.ci.out2[time.temp.ci.out2$Effect %in% c("Year") & time.temp.ci.out2$TreeID %in% trees.random, ]) + 
   facet_wrap(~TreeID, scales="free_y") +
   # geom_line(aes(x=x, y=0), linetype="dashed")+
